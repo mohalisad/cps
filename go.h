@@ -16,12 +16,12 @@ void change_state(byte state,byte speedy = MOVE_SPEED){
       left_motor (true,speedy);
       break;
     case TURN_RIGHT:
-      right_motor(true,speedy);
+      right_motor(true ,speedy);
       left_motor (false,speedy);
       break;
     case TURN_LEFT:
       right_motor(false,speedy);
-      left_motor (true,speedy);
+      left_motor (true ,speedy);
       break;
   }
 }
