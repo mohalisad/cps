@@ -12,13 +12,13 @@ void setup() {
 
 void loop() {
   delay(3000);
-  go(STRAIGHT);
+  change_state(GO_STRAIGHT);
   delay(500);
-  turn(RIGHT);
+  change_state(TURN_RIGHT);
   delay(500);
-  go(BACK);
+  change_state(GO_BACK);
   delay(500);
-  turn(LEFT);
+  change_state(TURN_LEFT);
   delay(500);
   stop_all();
   delay(5000);
