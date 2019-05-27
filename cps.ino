@@ -8,18 +8,12 @@
 
 void setup() {
   setup_pins();
+  Serial.begin(9600);
 }
 
 void loop() {
-  delay(3000);
-  change_state(GO_STRAIGHT);
-  delay(500);
-  change_state(TURN_RIGHT);
-  delay(500);
-  change_state(GO_BACK);
-  delay(500);
-  change_state(TURN_LEFT);
-  delay(500);
-  stop_all();
   delay(5000);
+  move_to(128,180);
+  delay(5000);
+  stop_all();
 }
