@@ -1,3 +1,5 @@
+byte speeds[] = {128,170,232,255};
+
 void setup_pins(){
   pinMode(RIGHT_DC , OUTPUT);
   pinMode(RIGHT_PWM, OUTPUT);

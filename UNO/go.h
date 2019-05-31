@@ -5,8 +5,11 @@
 #define TURN_RIGHT  2
 #define TURN_LEFT   3
 
-#define MAX_DEGREE    60
-#define MULTIPLICAND  0.3
+#define MULTI1 0.3
+#define MULTI2 0.3
+
+#define MAX_SPEED 255
+#define MIN_SPEED 64
 
 void change_state(byte state,byte speedy = MOVE_SPEED){
   switch(state){
@@ -31,22 +34,22 @@ void change_state(byte state,byte speedy = MOVE_SPEED){
 //angle from 0 to 180
 void move_to(byte speedy,byte angle = 0,bool reverse = false){
   bool right = false;
-  byte max_speed,min_speed;
+  int max_speed,min_speed;
   if (angle > 90){
     angle = angle-90;
     right = true;
   }else{
     angle = 90-angle;
   }
-  angle = min(MAX_DEGREE,angle);
-  max_speed = speedy + MULTIPLICAND*angle;
-  min_speed = speedy - MULTIPLICAND*angle;
-  Serial.println(String(max_speed)+"," + String(min_speed));
+  max_speed = speedy + MULTI1*angle;
+  min_speed = speedy - MULTI2*angle;
+  max_speed = min(max_speed,MAX_SPEED);
+  min_speed = max(min_speed,MIN_SPEED);
   if (right){
-    //right_motor(false,min_speed);
-    //left_motor (false,max_speed);
+    right_motor(reverse,min_speed);
+    left_motor (reverse,max_speed);
   }else{
-    //right_motor(false,max_speed);
-    //left_motor (false,min_speed);
+    right_motor(reverse,max_speed);
+    left_motor (reverse,min_speed);
   }
 }
