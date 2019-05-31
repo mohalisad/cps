@@ -6,12 +6,20 @@
 #include "engine.h"
 #include "go.h"
 
+#define JAVA_STOP         0
+#define JAVA_MOVE         1
+#define JAVA_REVERSE_MOVE 2
+#define JAVA_GO_STRAIGHT  3
+#define JAVA_GO_BACK      4
+#define JAVA_TURN_RIGHT   5
+#define JAVA_TURN_LEFT    6
+
 void parse_command(byte inp[2]){
   byte speedy,angle
   speedy = inp[0] >>6;
   angle  = (inp[0]&0x3F);
   angle  = angle*3;
-  
+
 }
 
 void setup() {
