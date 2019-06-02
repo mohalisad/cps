@@ -13,11 +13,10 @@ void setup() {
 }
 
 void loop() {
-//   byte command[2];
-//   if(Serial.available() >= 2){
-//     command[0] = Serial.read();
-//     command[1] = Serial.read();
-//     parse_command(command);
-//   }
-  change_state(GO_STRAIGHT,128);
+   byte command[2];
+   if(Serial.available() >= 2){
+     command[0] = Serial.read();
+     command[1] = Serial.read();
+     parse_command(command);
+   }
 }

@@ -1,6 +1,6 @@
-#define RIGHT_BIAS 2
-#define LEFT_BIAS  0
-byte speeds[] = {128,170,232,255};
+#define RIGHT_BIAS 0
+#define LEFT_BIAS  10
+byte speeds[] = {96,170,232,255};
 
 void setup_pins(){
   pinMode(RIGHT_PWM1, OUTPUT);
