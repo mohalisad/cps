@@ -1,19 +1,21 @@
+#define RIGHT_BIAS 2
+#define LEFT_BIAS  0
 byte speeds[] = {128,170,232,255};
 
 void setup_pins(){
-  pinMode(RIGHT_DC , OUTPUT);
-  pinMode(RIGHT_PWM, OUTPUT);
-  pinMode(LEFT_DC,  OUTPUT);
-  pinMode(LEFT_PWM, OUTPUT);
+  pinMode(RIGHT_PWM1, OUTPUT);
+  pinMode(RIGHT_PWM2, OUTPUT);
+  pinMode(LEFT_PWM1 , OUTPUT);
+  pinMode(LEFT_PWM2 , OUTPUT);
 }
 
 void stop_right(){
-  digitalWrite(RIGHT_DC , 0);
-  digitalWrite(RIGHT_PWM, 0);
+  digitalWrite(RIGHT_PWM1, 0);
+  digitalWrite(RIGHT_PWM2, 0);
 }
 void stop_left(){
-  digitalWrite(LEFT_DC , 0);
-  digitalWrite(LEFT_PWM, 0);
+  digitalWrite(LEFT_PWM1, 0);
+  digitalWrite(LEFT_PWM2, 0);
 }
 void stop_all(){
   stop_right();
@@ -21,20 +23,22 @@ void stop_all(){
 }
 
 void right_motor(bool reverse,byte motor_speed){
+  motor_speed += RIGHT_BIAS;
   if (reverse){
-    analogWrite (RIGHT_PWM, 255-motor_speed);
-    digitalWrite(RIGHT_DC ,               1);
+    analogWrite (RIGHT_PWM2, motor_speed);
+    digitalWrite(RIGHT_PWM1,           0);
   }else{
-    analogWrite (RIGHT_PWM, motor_speed);
-    digitalWrite(RIGHT_DC ,           0);
+    analogWrite (RIGHT_PWM1, motor_speed);
+    digitalWrite(RIGHT_PWM2,           0);
   }
 }
 void left_motor(bool reverse,byte motor_speed){
-  if (!reverse){
-    analogWrite (LEFT_PWM, 255-motor_speed);
-    digitalWrite(LEFT_DC ,               1);
+  motor_speed += LEFT_BIAS;
+  if (reverse){
+    analogWrite (LEFT_PWM2, motor_speed);
+    digitalWrite(LEFT_PWM1,           0);
   }else{
-    analogWrite (LEFT_PWM, motor_speed);
-    digitalWrite(LEFT_DC ,           0);
+    analogWrite (LEFT_PWM1, motor_speed);
+    digitalWrite(LEFT_PWM2,           0);
   }
 }

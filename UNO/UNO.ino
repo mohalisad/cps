@@ -1,7 +1,7 @@
-#define RIGHT_PWM 6
-#define RIGHT_DC  7
-#define LEFT_PWM  5
-#define LEFT_DC   4
+#define RIGHT_PWM1 10
+#define RIGHT_PWM2 11
+#define LEFT_PWM1  5
+#define LEFT_PWM2  6
 
 #include "engine.h"
 #include "go.h"
@@ -13,10 +13,11 @@ void setup() {
 }
 
 void loop() {
-  byte command[2];
-  if(Serial.available() == 2){
-    command[0] = Serial.read();
-    command[1] = Serial.read();
-    parse_command(command);
-  }
+//   byte command[2];
+//   if(Serial.available() >= 2){
+//     command[0] = Serial.read();
+//     command[1] = Serial.read();
+//     parse_command(command);
+//   }
+  change_state(GO_STRAIGHT,128);
 }
