@@ -6,10 +6,13 @@ import java.util.Scanner;
 public class Main {
     private static DatagramSocket socket;
     //speed 1-4 angle 0-180
-    public static byte[] make_packet(int speed,int angle,Mode mode){
-        byte[] return_value = new byte[2];
-        return_value[0] = (byte)((int)((speed-1)<<6) + (int)((angle/3)&0x3F));
-        return_value[1] = (byte)(mode.ordinal()<<5);
+    public static byte[] make_packet(int speed,int angle,Mode mode,int seqNumber){
+        byte[] return_value = new byte[4];
+		seqNumber       = seqNumber%512;
+		return_value[0] = (byte) 170;
+        return_value[1] = (byte)((int)((speed-1)<<6) + (int)((angle/3)&0x3F));
+        return_value[2] = (byte)((mode.ordinal()<<5) + (seqNumber/16));
+		return_value[3] = (byte)(((seqNumber%16)<<4) + 10);
         return return_value;
     }
     public static String byte_to_str(byte[] bytes){
@@ -28,7 +31,7 @@ public class Main {
             while (scn.hasNextLine()) {
                 line = scn.nextLine();
                 tokens = line.split("\\s+");
-                byte[] pkt = make_packet(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), Mode.values()[Integer.parseInt(tokens[2])]);
+                byte[] pkt = make_packet(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), Mode.values()[Integer.parseInt(tokens[2])],0);
                     DatagramPacket packet = new DatagramPacket(pkt, pkt.length, InetAddress.getByName("192.168.1.50"), 4210);
                     socket.send(packet);
                     System.out.println(byte_to_str(pkt));

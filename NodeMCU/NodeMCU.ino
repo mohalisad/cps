@@ -40,7 +40,7 @@ void loop()
   if (packetSize)
   {
     int len = Udp.read(incomingPacket, MAX_LEN);
-    Serial.write(incomingPacket,2);
+    Serial.write(incomingPacket,len);
     //Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     //Udp.write(replyPacket);
     //Udp.endPacket();

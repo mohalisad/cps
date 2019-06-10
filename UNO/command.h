@@ -6,13 +6,51 @@
 #define JAVA_TURN_RIGHT   5
 #define JAVA_TURN_LEFT    6
 
-void parse_command(byte inp[2]){
+#define COMMAND_LENGTH    4
+
+void clear_serial_buffer(){
+  while(Serial.available()){
+    Serial.read();
+  }
+}
+
+void init_serial(int baud){
+  Serial.begin(baud);
+  delay(100);
+  clear_serial_buffer();
+}
+
+void read_command(byte *command){
+  if(Serial.available() >= 1){
+    command[0] = Serial.read();
+    if(command[0] == 170){
+      while(Serial.available() < COMMAND_LENGTH-1);
+      command[1] = Serial.read();
+      command[2] = Serial.read();
+      command[3] = Serial.read();
+    }
+  }else{
+    command[0] = 0;
+  }
+}
+
+bool valid_command(byte *command){
+  if(command[0] == 170){
+    if((command[3]&15) == 10){
+      return true;
+    }
+  }
+  clear_serial_buffer();
+  return false;
+}
+
+void parse_command(byte inp[4]){
   byte speedy,angle,mode;
-  speedy = inp[0] >>6;
+  speedy = inp[1] >>6;
   speedy = speeds[speedy];
-  angle  = (inp[0]&0x3F);
+  angle  = (inp[1]&0x3F);
   angle  = angle*3;
-  mode   = inp[1] >>5;
+  mode   = inp[2] >>5;
   switch (mode){
     case JAVA_STOP:
       stop_all();
@@ -36,16 +74,4 @@ void parse_command(byte inp[2]){
       change_state(TURN_LEFT,speedy);
       break;
   }
-}
-
-void clear_serial_buffer(){
-  while(Serial.available()){
-    Serial.read();
-  }
-}
-
-void init_serial(int baud){
-  Serial.begin(baud);
-  delay(100);
-  clear_serial_buffer();
 }
