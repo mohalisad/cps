@@ -1,6 +1,7 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -19,10 +20,11 @@ public class Main {
         String[] tokens;
         try {
             socket = new DatagramSocket(4110);
+            new Thread(new listener(socket)).start();
             while (scn.hasNextLine()) {
                 line = scn.nextLine();
                 tokens = line.split("\\s+");
-                byte[] pkt = new Packet(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), PacketMode.values()[Integer.parseInt(tokens[2])],0).getBytes();
+                byte[] pkt = new Packet(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), PacketMode.values()[Integer.parseInt(tokens[2])],127).getBytes();
                 DatagramPacket packet = new DatagramPacket(pkt, pkt.length, InetAddress.getByName("192.168.1.50"), 4210);
                 socket.send(packet);
                 System.out.println(byte_to_str(pkt));
@@ -63,6 +65,25 @@ public class Main {
             return_value[2] = (byte)((mode.ordinal()<<5) + (seqNumber/16));
             return_value[3] = (byte)(((seqNumber%16)<<4) + 10);
             return return_value;
+        }
+    }
+    public static class listener implements Runnable{
+        byte[] receive = new byte[100];
+        private DatagramSocket socket;
+        public listener(DatagramSocket socket){
+            this.socket = socket;
+        }
+        public void run(){
+            DatagramPacket dpPacket = new DatagramPacket(receive, receive.length);
+            byte[] ackPack = new byte[2];
+            while (true) {
+                try {
+                    socket.receive(dpPacket);
+                    ackPack[0] = receive[0];
+                    ackPack[1] = receive[1];
+                    System.out.println("rcv   :"+byte_to_str(ackPack));
+                } catch (Exception ex) { }
+            }
         }
     }
 }
