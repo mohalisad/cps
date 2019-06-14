@@ -7,13 +7,14 @@
 #include "go.h"
 #include "command.h"
 
+byte command[COMMAND_LENGTH];
+
 void setup() {
   setup_pins();
   init_serial(9600);
 }
 
 void loop() {
-  byte command[COMMAND_LENGTH];
   read_command(command);
   if(valid_command(command)){
     parse_command(command);

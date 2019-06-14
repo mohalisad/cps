@@ -1,7 +1,6 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -18,17 +17,19 @@ public class Main {
         Scanner scn = new Scanner(System.in);
         String line;
         String[] tokens;
+        PacketMan packetMan = new PacketMan();
         try {
             socket = new DatagramSocket(4110);
-            new Thread(new listener(socket)).start();
+            new Thread(new ResponseListener(socket,packetMan)).start();
             while (scn.hasNextLine()) {
                 line = scn.nextLine();
                 tokens = line.split("\\s+");
-                byte[] pkt = new Packet(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), PacketMode.values()[Integer.parseInt(tokens[2])],127).getBytes();
-                DatagramPacket packet = new DatagramPacket(pkt, pkt.length, InetAddress.getByName("192.168.1.50"), 4210);
-                socket.send(packet);
-                System.out.println(byte_to_str(pkt));
-
+                byte[] pkt = packetMan.createPacket(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), PacketMode.values()[Integer.parseInt(tokens[2])]);
+                if (pkt != null) {
+                    DatagramPacket packet = new DatagramPacket(pkt, pkt.length, InetAddress.getByName("192.168.1.50"), 4210);
+                    socket.send(packet);
+                    System.out.println(byte_to_str(pkt));
+                }
             }
         } catch (Exception ex) {
             System.out.println("error");
@@ -67,21 +68,50 @@ public class Main {
             return return_value;
         }
     }
-    public static class listener implements Runnable{
+    public static class PacketMan{
+        private Packet lastPack = null;
+        private Packet curPack  = null;
+        private int seqNumber = 0;
+        public byte[] createPacket(int speed,int angle,PacketMode mode){
+            speed = Math.max(speed,1);
+            speed = Math.min(speed,4);
+            angle = Math.max(angle,0);
+            angle = Math.min(angle,180);
+            curPack = new Packet(speed,angle,mode,seqNumber);
+            if(lastPack != null){
+                if(curPack.equals(lastPack)){
+                    return null;
+                }
+            }
+            lastPack = curPack;
+            seqNumber++;
+            return curPack.getBytes();
+        }
+        public void ackedPacket(byte[] ackPacket){
+            int ackSeq;
+            ackSeq = ackPacket[0] & 0xFF;
+            ackSeq = ackSeq*2 + ((ackPacket[1]>>7)&0x01);
+            System.out.println("acked: " + ackSeq);
+        }
+    }
+    public static class ResponseListener implements Runnable{
+        private static final int ackPacketSize = 2;
         byte[] receive = new byte[100];
         private DatagramSocket socket;
-        public listener(DatagramSocket socket){
+        private PacketMan packetMan;
+        public ResponseListener(DatagramSocket socket,PacketMan packetMan){
             this.socket = socket;
+            this.packetMan = packetMan;
         }
         public void run(){
             DatagramPacket dpPacket = new DatagramPacket(receive, receive.length);
-            byte[] ackPack = new byte[2];
+            byte[] ackPack = new byte[ackPacketSize];
             while (true) {
                 try {
                     socket.receive(dpPacket);
                     ackPack[0] = receive[0];
                     ackPack[1] = receive[1];
-                    System.out.println("rcv   :"+byte_to_str(ackPack));
+                    packetMan.ackedPacket(ackPack);
                 } catch (Exception ex) { }
             }
         }
