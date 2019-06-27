@@ -40,8 +40,10 @@ public class Main {
         STOP,MOVE,REVERSE_MOVE,GO_STRAIGHT,GO_BACK,TURN_RIGHT,TURN_LEFT
     }
     public static class Packet{
-        private int angle,speed,seqNumber;
+        private int angle,speed;
         private PacketMode mode;
+        public long timeStamp;
+        public int seqNumber;
         //speed 1-4 angle 0-180
         public Packet(int speed,int angle,PacketMode mode,int seqNumber){
             this.speed = speed-1;
@@ -65,12 +67,14 @@ public class Main {
             return_value[1] = (byte)((int)(speed<<6) + (int)(angle&0x3F));
             return_value[2] = (byte)((mode.ordinal()<<5) + (seqNumber/16));
             return_value[3] = (byte)(((seqNumber%16)<<4) + 10);
+            timeStamp = System.currentTimeMillis();
             return return_value;
         }
     }
     public static class PacketMan{
         private Packet lastPack = null;
         private Packet curPack  = null;
+        private lastAckSeq;
         private int seqNumber = 0;
         public byte[] createPacket(int speed,int angle,PacketMode mode){
             speed = Math.max(speed,1);
@@ -88,10 +92,16 @@ public class Main {
             return curPack.getBytes();
         }
         public void ackedPacket(byte[] ackPacket){
-            int ackSeq;
-            ackSeq = ackPacket[0] & 0xFF;
-            ackSeq = ackSeq*2 + ((ackPacket[1]>>7)&0x01);
-            System.out.println("acked: " + ackSeq);
+            lastAckSeq = ackPacket[0] & 0xFF;
+            lastAckSeq = ackSeq*2 + ((ackPacket[1]>>7)&0x01);
+            System.out.println("acked: " + lastAckSeq);
+        }
+        public void intervalRun(){
+            if (lastAckSeq != lastPack.seqNumber){
+                if (System.currentTimeMillis() - lastPack.timeStamp > 5){
+                    //resend
+                }
+            }
         }
     }
     public static class ResponseListener implements Runnable{
