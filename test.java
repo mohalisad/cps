@@ -74,7 +74,7 @@ public class Main {
     public static class PacketMan{
         private Packet lastPack = null;
         private Packet curPack  = null;
-        private lastAckSeq;
+        private int  lastAckSeq;
         private int seqNumber = 0;
         public byte[] createPacket(int speed,int angle,PacketMode mode){
             speed = Math.max(speed,1);
@@ -93,7 +93,7 @@ public class Main {
         }
         public void ackedPacket(byte[] ackPacket){
             lastAckSeq = ackPacket[0] & 0xFF;
-            lastAckSeq = ackSeq*2 + ((ackPacket[1]>>7)&0x01);
+            lastAckSeq = lastAckSeq*2 + ((ackPacket[1]>>7)&0x01);
             System.out.println("acked: " + lastAckSeq);
         }
         public void intervalRun(){
