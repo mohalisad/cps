@@ -5,8 +5,9 @@
 #define TURN_RIGHT  2
 #define TURN_LEFT   3
 
-#define MULTI1 0.9
-#define MULTI2 0.9
+#define MULTI1 0.6
+#define MULTI2 1.5
+
 
 void change_state(byte state,short speedy = MOVE_SPEED){
   switch(state){

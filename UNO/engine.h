@@ -1,9 +1,9 @@
-#define RIGHT_BIAS 10
-#define LEFT_BIAS  -10
+#define RIGHT_BIAS 5
+#define LEFT_BIAS  -15
 #define MAX_SPEED  255
 #define MIN_SPEED  0
 
-byte speeds[] = {220,220,220,220};
+byte speeds[] = {205,220,235,250};
 
 void setup_pins(){
   pinMode(RIGHT_PWM1, OUTPUT);
