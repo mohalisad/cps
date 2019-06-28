@@ -19,5 +19,5 @@ void loop() {
   if(valid_command(command)){
     parse_command(command);
   }
-  delay(500);
+  delay(4);
 }

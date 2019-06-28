@@ -35,10 +35,10 @@ void loop()
     packetSize = Udp.parsePacket();
     if (packetSize == 0){
       Serial.write(incomingPacket,len);
-//      make_ack();
-//      Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-//      Udp.write(ackPack,ACK_PACKET_LEN);
-//      Udp.endPacket();
+      make_ack();
+      Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+      Udp.write(ackPack,ACK_PACKET_LEN);
+      Udp.endPacket();
     }
   }
 }

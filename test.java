@@ -1,3 +1,5 @@
+package com.company;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -22,13 +24,17 @@ public class Main {
             socket = new DatagramSocket(4110);
             new Thread(new ResponseListener(socket,packetMan)).start();
             while (scn.hasNextLine()) {
-                line = scn.nextLine();
-                tokens = line.split("\\s+");
-                byte[] pkt = packetMan.createPacket(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), PacketMode.values()[Integer.parseInt(tokens[2])]);
-                if (pkt != null) {
-                    DatagramPacket packet = new DatagramPacket(pkt, pkt.length, InetAddress.getByName("192.168.1.50"), 4210);
-                    socket.send(packet);
-                    System.out.println(byte_to_str(pkt));
+                try {
+                    line = scn.nextLine();
+                    tokens = line.split("\\s+");
+                    byte[] pkt = packetMan.createPacket(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), PacketMode.values()[Integer.parseInt(tokens[2])]);
+                    if (pkt != null) {
+                        DatagramPacket packet = new DatagramPacket(pkt, pkt.length, InetAddress.getByName("192.168.43.22"), 4210);
+                        socket.send(packet);
+                        System.out.println(byte_to_str(pkt));
+                    }
+                } catch (Exception ex) {
+                    System.out.println("error");
                 }
             }
         } catch (Exception ex) {
@@ -84,7 +90,7 @@ public class Main {
             curPack = new Packet(speed,angle,mode,seqNumber);
             if(lastPack != null){
                 if(curPack.equals(lastPack)){
-                    return null;
+                    // return null;
                 }
             }
             lastPack = curPack;
