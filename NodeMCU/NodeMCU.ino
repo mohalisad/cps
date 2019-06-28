@@ -1,4 +1,4 @@
-#define WIFI_SSID   "MiWiFi"
+#define WIFI_SSID   "myhot"
 #define WIFI_PASS   "p:159357"
 #define LISTEN_PORT 4210
 
@@ -10,6 +10,7 @@
 
 byte incomingPacket[INCOMING_PACKET_LEN];
 byte ackPack[ACK_PACKET_LEN];
+int packetSize;
 
 void make_ack(){
   short seqNumber;
@@ -27,14 +28,17 @@ void setup()
 
 void loop()
 {
-  int packetSize = Udp.parsePacket();
+  packetSize = Udp.parsePacket();
   if (packetSize)
   {
     int len = Udp.read(incomingPacket, INCOMING_PACKET_LEN);
-    Serial.write(incomingPacket,len);
-    make_ack();
-    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    Udp.write(ackPack,ACK_PACKET_LEN);
-    Udp.endPacket();
+    packetSize = Udp.parsePacket();
+    if (packetSize == 0){
+      Serial.write(incomingPacket,len);
+      make_ack();
+      Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+      Udp.write(ackPack,ACK_PACKET_LEN);
+      Udp.endPacket();
+    }
   }
 }

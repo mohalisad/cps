@@ -8,8 +8,8 @@ WiFiUDP Udp;
 unsigned int localUdpPort = LISTEN_PORT;
 
 void init_wifi(){
-  IPAddress staticIP(192, 168, 1, 50);
-  IPAddress gateway(192, 168, 1, 1);
+  IPAddress staticIP(192, 168, 43, 22);
+  IPAddress gateway(192, 168, 43, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.config(staticIP, subnet, gateway);
   WiFi.begin(ssid, password);

@@ -5,13 +5,10 @@
 #define TURN_RIGHT  2
 #define TURN_LEFT   3
 
-#define MULTI1 0.3
-#define MULTI2 0.3
+#define MULTI1 0.9
+#define MULTI2 0.9
 
-#define MAX_SPEED 255
-#define MIN_SPEED 64
-
-void change_state(byte state,byte speedy = MOVE_SPEED){
+void change_state(byte state,short speedy = MOVE_SPEED){
   switch(state){
     case GO_STRAIGHT:
       right_motor(false,speedy);
@@ -32,7 +29,7 @@ void change_state(byte state,byte speedy = MOVE_SPEED){
   }
 }
 //angle from 0 to 180
-void move_to(byte speedy,byte angle = 0,bool reverse = false){
+void move_to(short speedy,byte angle = 0,bool reverse = false){
   bool right = false;
   int max_speed,min_speed;
   if (angle > 90){
@@ -43,8 +40,6 @@ void move_to(byte speedy,byte angle = 0,bool reverse = false){
   }
   max_speed = speedy + MULTI1*angle;
   min_speed = speedy - MULTI2*angle;
-  max_speed = min(max_speed,MAX_SPEED);
-  min_speed = max(min_speed,MIN_SPEED);
   if (right){
     right_motor(reverse,min_speed);
     left_motor (reverse,max_speed);
